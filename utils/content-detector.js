@@ -1,5 +1,10 @@
 // utils/content-detector.js - 智能内容检测
 
+// Constants for content detection thresholds
+const MIN_TEXT_LENGTH = 100;
+const MIN_PARAGRAPH_LENGTH = 10;
+const PARAGRAPH_WEIGHT = 0.1;
+
 /**
  * 内容检测器 - 识别页面主要内容区域
  */
@@ -41,8 +46,8 @@ class ContentDetector {
     if (this.ignoreTags.includes(tagName)) return false;
 
     // 检查 class/id 是否包含忽略关键词
-    const className = element.className || '';
-    const id = element.id || '';
+    const className = element.getAttribute('class') || '';
+    const id = element.getAttribute('id') || '';
     for (const pattern of this.ignorePatterns) {
       if (className.toLowerCase().includes(pattern) || id.toLowerCase().includes(pattern)) {
         return false;
@@ -51,7 +56,7 @@ class ContentDetector {
 
     // 检查文本长度
     const textLength = element.textContent.trim().length;
-    return textLength > 100;
+    return textLength > MIN_TEXT_LENGTH;
   }
 
   /**
@@ -88,14 +93,14 @@ class ContentDetector {
     for (const link of links) {
       linkTextLength += link.textContent.trim().length;
     }
-    const linkDensity = linkTextLength / textLength;
+    const linkDensity = textLength > 0 ? linkTextLength / textLength : 0;
 
     // 计算段落数量
     const paragraphs = element.querySelectorAll('p');
     const paragraphCount = paragraphs.length;
 
     // 评分公式：文本长度 * (1 - 链接密度) * 段落数权重
-    const score = textLength * (1 - linkDensity) * (1 + paragraphCount * 0.1);
+    const score = textLength * (1 - linkDensity) * (1 + paragraphCount * PARAGRAPH_WEIGHT);
 
     return score;
   }
@@ -121,8 +126,8 @@ class ContentDetector {
             const tagName = parent.tagName.toLowerCase();
             if (this.ignoreTags.includes(tagName)) return NodeFilter.FILTER_REJECT;
 
-            const className = parent.className || '';
-            const id = parent.id || '';
+            const className = parent.getAttribute('class') || '';
+            const id = parent.getAttribute('id') || '';
             for (const pattern of this.ignorePatterns) {
               if (className.toLowerCase().includes(pattern) || id.toLowerCase().includes(pattern)) {
                 return NodeFilter.FILTER_REJECT;
