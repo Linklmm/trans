@@ -70,13 +70,13 @@ class OllamaAPI {
         signal: controller.signal
       });
 
-      clearTimeout(timeoutId);
-
       if (!response.ok) {
+        clearTimeout(timeoutId);
         throw new Error(`HTTP error: ${response.status}`);
       }
 
       const data = await response.json();
+      clearTimeout(timeoutId);
       return data.response || '';
     } catch (error) {
       clearTimeout(timeoutId);
