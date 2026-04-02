@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ollama Translator</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>Ollama Translator</h1>
+      <span class="connection-status" id="connectionStatus">检查连接...</span>
+    </header>
+
+    <main class="popup-main">
+      <!-- API 设置 -->
+      <section class="settings-section">
+        <h2>API 设置</h2>
+
+        <div class="setting-item">
+          <label for="baseUrl">Ollama 地址</label>
+          <input type="text" id="baseUrl" placeholder="http://localhost:11434">
+        </div>
+
+        <div class="setting-item">
+          <label for="modelSelect">翻译模型</label>
+          <div class="model-select-wrapper">
+            <select id="modelSelect">
+              <option value="">请先连接 Ollama</option>
+            </select>
+            <button class="refresh-btn" id="refreshModels" title="刷新模型列表">⟳</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 翻译触发方式 -->
+      <section class="settings-section">
+        <h2>翻译触发方式</h2>
+
+        <div class="setting-item checkbox-group">
+          <label>
+            <input type="checkbox" id="triggerSelection" checked>
+            <span>选中翻译</span>
+          </label>
+          <small class="hint">选中文本后右键或快捷键翻译</small>
+        </div>
+
+        <div class="setting-item checkbox-group">
+          <label>
+            <input type="checkbox" id="triggerPage" checked>
+            <span>全文翻译</span>
+          </label>
+          <small class="hint">翻译整个页面内容</small>
+        </div>
+
+        <div class="setting-item checkbox-group">
+          <label>
+            <input type="checkbox" id="triggerParagraph" checked>
+            <span>段落翻译</span>
+          </label>
+          <small class="hint">鼠标悬停段落时显示翻译按钮</small>
+        </div>
+      </section>
+
+      <!-- 快捷操作 -->
+      <section class="settings-section">
+        <h2>快捷操作</h2>
+
+        <div class="action-buttons">
+          <button class="action-btn primary" id="translatePageBtn">
+            翻译当前页面
+          </button>
+          <button class="action-btn primary" id="translateSmartBtn">
+            智能翻译
+          </button>
+        </div>
+
+        <div class="shortcut-info">
+          <p>
+            <strong>选中翻译:</strong>
+            <span id="shortcutSelection">Ctrl+Shift+T</span>
+          </p>
+          <p>
+            <strong>全文翻译:</strong>
+            <span id="shortcutPage">Ctrl+Shift+P</span>
+          </p>
+          <a href="#" id="configureShortcuts">配置快捷键</a>
+        </div>
+      </section>
+
+      <!-- 缓存设置 -->
+      <section class="settings-section">
+        <h2>缓存设置</h2>
+
+        <div class="setting-item checkbox-group">
+          <label>
+            <input type="checkbox" id="cacheEnabled" checked>
+            <span>启用翻译缓存</span>
+          </label>
+          <small class="hint">缓存翻译结果，减少重复请求</small>
+        </div>
+
+        <div class="cache-actions">
+          <button class="action-btn secondary" id="clearCacheBtn">
+            清除所有缓存
+          </button>
+          <span class="cache-size" id="cacheSize">缓存：0 条</span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="popup-footer">
+      <p>版本 1.0.0</p>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
