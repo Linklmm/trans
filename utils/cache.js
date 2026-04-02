@@ -10,7 +10,7 @@ function hashString(str) {
     hash = ((hash << 5) - hash) + char;
     hash = hash & hash; // Convert to 32bit integer
   }
-  return Math.abs(hash).toString(36);
+  return (hash >>> 0).toString(36);  // Unsigned 32-bit
 }
 
 /**
@@ -19,7 +19,6 @@ function hashString(str) {
 class TranslationCache {
   constructor() {
     this.enabled = true;
-    this.storageKey = 'ollama_cache';
   }
 
   /**
@@ -39,7 +38,8 @@ class TranslationCache {
       const key = this._getKey(text, model);
       const result = await chrome.storage.local.get(key);
       return result[key] || null;
-    } catch {
+    } catch (err) {
+      console.warn('Cache operation failed:', err);
       return null;
     }
   }
@@ -53,8 +53,8 @@ class TranslationCache {
     try {
       const key = this._getKey(text, model);
       await chrome.storage.local.set({ [key]: translation });
-    } catch {
-      // 缓存失败不影响翻译
+    } catch (err) {
+      console.warn('Cache operation failed:', err);
     }
   }
 
@@ -66,8 +66,8 @@ class TranslationCache {
       const allData = await chrome.storage.local.get(null);
       const cacheKeys = Object.keys(allData).filter(k => k.startsWith('trans_'));
       await chrome.storage.local.remove(cacheKeys);
-    } catch {
-      // 清除失败静默处理
+    } catch (err) {
+      console.warn('Cache operation failed:', err);
     }
   }
 
