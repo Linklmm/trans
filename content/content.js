@@ -60,7 +60,13 @@
     return new Promise((resolve) => {
       chrome.runtime.sendMessage(
         { action: 'translate', text: text },
-        resolve
+        (response) => {
+          if (chrome.runtime.lastError) {
+            resolve({ error: '扩展通信失败，请刷新页面重试' });
+          } else {
+            resolve(response);
+          }
+        }
       );
     });
   }
@@ -73,10 +79,13 @@
     if (wrapper && !wrapper.classList.contains('ollama-translation-wrapper')) {
       const spanWrapper = document.createElement('span');
       spanWrapper.className = 'ollama-translation-wrapper';
-      element.parentNode.insertBefore(spanWrapper, element);
+      const parentNode = element.parentNode;
+      parentNode.insertBefore(spanWrapper, element);
       spanWrapper.appendChild(element);
+      spanWrapper.appendChild(translationElement);
+    } else {
+      element.parentNode.insertBefore(translationElement, element.nextSibling);
     }
-    element.parentNode.insertBefore(translationElement, element.nextSibling);
   }
 
   /**
@@ -133,10 +142,13 @@
       <span class="ollama-progress-close">×</span>
     `;
 
-    progressDiv.querySelector('.ollama-progress-close').onclick = () => {
-      cancelCurrentTranslation();
-      progressDiv.remove();
-    };
+    const closeBtn = progressDiv.querySelector('.ollama-progress-close');
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        cancelCurrentTranslation();
+        progressDiv.remove();
+      };
+    }
 
     document.body.appendChild(progressDiv);
     return progressDiv;
@@ -185,7 +197,7 @@
       updateProgress(progressDiv, i + 1, paragraphs.length);
 
       const existingTranslation = para.element.querySelector('.ollama-translation');
-      if (existingTranslation && existingTranslation.textContent.trim()) {
+      if (existingTranslation && !existingTranslation.classList.contains('loading')) {
         continue;
       }
 
@@ -227,7 +239,7 @@
       updateProgress(progressDiv, i + 1, paragraphs.length);
 
       const existingTranslation = para.element.querySelector('.ollama-translation');
-      if (existingTranslation && existingTranslation.textContent.trim()) {
+      if (existingTranslation && !existingTranslation.classList.contains('loading')) {
         continue;
       }
 
