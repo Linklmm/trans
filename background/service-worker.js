@@ -23,6 +23,9 @@ chrome.runtime.onInstalled.addListener(async () => {
   // 设置默认配置
   await chrome.storage.sync.set(defaultSettings);
 
+  // 移除现有菜单，防止重复
+  await chrome.contextMenus.removeAll();
+
   // 创建右键菜单
   chrome.contextMenus.create({
     id: 'translate-selection',
@@ -53,48 +56,58 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 
 // 右键菜单点击
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === 'translate-selection') {
-    const text = info.selectionText;
-    if (text) {
-      // 发送消息到 Content Script
+  try {
+    if (info.menuItemId === 'translate-selection') {
+      const text = info.selectionText;
+      if (text) {
+        // 发送消息到 Content Script
+        chrome.tabs.sendMessage(tab.id, {
+          action: 'translateSelection',
+          text: text
+        });
+      }
+    } else if (info.menuItemId === 'translate-smart') {
       chrome.tabs.sendMessage(tab.id, {
-        action: 'translateSelection',
-        text: text
+        action: 'translateSmart'
       });
     }
-  } else if (info.menuItemId === 'translate-smart') {
-    chrome.tabs.sendMessage(tab.id, {
-      action: 'translateSmart'
-    });
+  } catch (err) {
+    console.error('Context menu action failed:', err);
   }
 });
 
 // 快捷键命令
 chrome.commands.onCommand.addListener(async (command, tab) => {
-  if (command === 'translate-selection') {
-    // 需要先获取选中文本
-    const results = await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: () => window.getSelection().toString()
-    });
-    const text = results[0].result;
-    if (text) {
+  try {
+    if (command === 'translate-selection') {
+      // 需要先获取选中文本
+      const results = await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => window.getSelection().toString()
+      });
+      const text = results[0].result;
+      if (text) {
+        chrome.tabs.sendMessage(tab.id, {
+          action: 'translateSelection',
+          text: text
+        });
+      }
+    } else if (command === 'translate-page') {
       chrome.tabs.sendMessage(tab.id, {
-        action: 'translateSelection',
-        text: text
+        action: 'translatePage'
       });
     }
-  } else if (command === 'translate-page') {
-    chrome.tabs.sendMessage(tab.id, {
-      action: 'translatePage'
-    });
+  } catch (err) {
+    console.error('Command action failed:', err);
   }
 });
 
 // 监听来自 Content Script 和 Popup 的消息
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // 处理异步响应
-  handleMessage(message, sender).then(sendResponse);
+  handleMessage(message, sender)
+    .then(sendResponse)
+    .catch(err => sendResponse({ error: err.message }));
   return true; // 保持消息通道开启
 });
 
