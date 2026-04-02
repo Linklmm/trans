@@ -44,6 +44,18 @@ class OllamaAPI {
    * @returns {string} - 翻译结果
    */
   async translate(text, model) {
+    // 输入验证
+    if (!text || !text.trim()) {
+      throw new Error('翻译内容不能为空');
+    }
+    if (!model || !model.trim()) {
+      throw new Error('请先选择翻译模型');
+    }
+
+    // 添加超时处理
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
     const prompt = `将以下英文翻译成中文，只返回译文，不要解释：\n${text}`;
 
     try {
@@ -54,8 +66,11 @@ class OllamaAPI {
           model: model,
           prompt: prompt,
           stream: false
-        })
+        }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
@@ -64,6 +79,10 @@ class OllamaAPI {
       const data = await response.json();
       return data.response || '';
     } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error('翻译超时，请重试');
+      }
       throw new Error(`翻译失败：${error.message}`);
     }
   }
