@@ -86,10 +86,10 @@ class TranslationCache {
   }
 }
 
-// 导出
+// 导出（支持模块、浏览器和 Service Worker）
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { TranslationCache, hashString };
-} else {
-  window.TranslationCache = TranslationCache;
-  window.hashString = hashString;
+} else if (typeof globalThis !== 'undefined') {
+  globalThis.TranslationCache = TranslationCache;
+  globalThis.hashString = hashString;
 }

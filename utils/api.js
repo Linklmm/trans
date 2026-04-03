@@ -103,9 +103,9 @@ class OllamaAPI {
   }
 }
 
-// 导出（支持模块和全局两种方式）
+// 导出（支持模块、浏览器和 Service Worker）
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { OllamaAPI };
-} else {
-  window.OllamaAPI = OllamaAPI;
+} else if (typeof globalThis !== 'undefined') {
+  globalThis.OllamaAPI = OllamaAPI;
 }
