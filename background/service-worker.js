@@ -1,6 +1,6 @@
 // background/service-worker.js - Background Service Worker
 
-importScripts('utils/api.js', 'utils/cache.js');
+importScripts('/utils/api.js', '/utils/cache.js');
 
 // 初始化
 const api = new OllamaAPI();
