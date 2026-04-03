@@ -103,9 +103,8 @@ class OllamaAPI {
   }
 }
 
-// 导出（支持模块、浏览器和 Service Worker）
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { OllamaAPI };
-} else if (typeof globalThis !== 'undefined') {
-  globalThis.OllamaAPI = OllamaAPI;
+// 导出：importScripts 会自动将类暴露到全局作用域
+// Content Script 中通过 globalThis 访问
+if (typeof window !== 'undefined') {
+  window.OllamaAPI = OllamaAPI;
 }
