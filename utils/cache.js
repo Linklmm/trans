@@ -1,4 +1,5 @@
 // utils/cache.js - 翻译缓存工具
+// 注意：使用 importScripts() 加载时，类会自动暴露到全局作用域
 
 /**
  * 简单字符串哈希函数
@@ -85,10 +86,4 @@ class TranslationCache {
     return this.enabled;
   }
 }
-
-// 导出：importScripts 会自动将类暴露到全局作用域
-// Content Script 中通过 window 访问
-if (typeof window !== 'undefined') {
-  window.TranslationCache = TranslationCache;
-  window.hashString = hashString;
-}
+// 类和函数定义在全局作用域，importScripts() 后可直接使用

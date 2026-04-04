@@ -1,4 +1,5 @@
 // utils/content-detector.js - 智能内容检测
+// 注意：使用 importScripts() 加载时，类会自动暴露到全局作用域
 
 // Constants for content detection thresholds
 const MIN_TEXT_LENGTH = 100;
@@ -197,9 +198,4 @@ class ContentDetector {
     return paragraphTags.includes(tag);
   }
 }
-
-// 导出：importScripts 会自动将类暴露到全局作用域
-// Content Script 中通过 window 访问
-if (typeof window !== 'undefined') {
-  window.ContentDetector = ContentDetector;
-}
+// 类定义在全局作用域，importScripts() 后可直接使用

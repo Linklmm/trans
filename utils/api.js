@@ -1,4 +1,5 @@
 // utils/api.js - Ollama API 封装
+// 注意：使用 importScripts() 加载时，类会自动暴露到全局作用域
 
 /**
  * Ollama API 客户端
@@ -102,9 +103,4 @@ class OllamaAPI {
     }
   }
 }
-
-// 导出：importScripts 会自动将类暴露到全局作用域
-// Content Script 中通过 globalThis 访问
-if (typeof window !== 'undefined') {
-  window.OllamaAPI = OllamaAPI;
-}
+// 类定义在全局作用域，importScripts() 后可直接使用 new OllamaAPI()
