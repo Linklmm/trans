@@ -8,7 +8,9 @@ const cache = new TranslationCache();
 
 // 默认配置
 const defaultSettings = {
+  apiType: 'ollama',
   baseUrl: 'http://localhost:11434',
+  apiKey: '',
   model: '',
   cacheEnabled: true,
   triggers: {
@@ -45,8 +47,14 @@ chrome.runtime.onInstalled.addListener(async () => {
 // 监听配置变化
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName === 'sync') {
+    if (changes.apiType) {
+      api.setApiType(changes.apiType.newValue);
+    }
     if (changes.baseUrl) {
       api.setBaseUrl(changes.baseUrl.newValue);
+    }
+    if (changes.apiKey) {
+      api.setApiKey(changes.apiKey.newValue);
     }
     if (changes.cacheEnabled) {
       cache.setEnabled(changes.cacheEnabled.newValue);
@@ -113,7 +121,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function handleMessage(message, sender) {
   const settings = await chrome.storage.sync.get(null);
+  api.setApiType(settings.apiType || defaultSettings.apiType);
   api.setBaseUrl(settings.baseUrl || defaultSettings.baseUrl);
+  api.setApiKey(settings.apiKey || defaultSettings.apiKey);
   cache.setEnabled(settings.cacheEnabled ?? defaultSettings.cacheEnabled);
 
   switch (message.action) {
@@ -154,15 +164,14 @@ async function handleTranslate(text, model) {
   }
 
   // 分段处理长文本
-  const maxChunkSize = 500;
+  const maxChunkSize = 2000;
   const chunks = splitText(text, maxChunkSize);
 
   try {
-    let result = '';
-    for (const chunk of chunks) {
-      const translation = await api.translate(chunk, model);
-      result += translation;
-    }
+    const results = await Promise.all(
+      chunks.map(chunk => api.translate(chunk, model))
+    );
+    const result = results.join('');
 
     // 存入缓存
     await cache.set(text, model, result);
@@ -176,7 +185,11 @@ async function handleTranslate(text, model) {
 async function handleGetModels() {
   try {
     const models = await api.getModels();
-    return { models: models.map(m => m.name) };
+    const apiType = (await chrome.storage.sync.get('apiType')).apiType || 'ollama';
+    const modelIds = apiType === 'openai'
+      ? models.map(m => m.id)
+      : models.map(m => m.name);
+    return { models: modelIds };
   } catch (error) {
     return { error: error.message, models: [] };
   }

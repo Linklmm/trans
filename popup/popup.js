@@ -20,14 +20,23 @@ async function loadSettings() {
   const settings = await chrome.storage.sync.get(null);
 
   // 填充表单
+  document.getElementById('apiType').value = settings.apiType || 'ollama';
   document.getElementById('baseUrl').value = settings.baseUrl || 'http://localhost:11434';
+  document.getElementById('apiKey').value = settings.apiKey || '';
   document.getElementById('cacheEnabled').checked = settings.cacheEnabled ?? true;
   document.getElementById('triggerSelection').checked = settings.triggers?.selection ?? true;
   document.getElementById('triggerPage').checked = settings.triggers?.page ?? true;
   document.getElementById('triggerParagraph').checked = settings.triggers?.paragraph ?? true;
 
-  // 加载模型列表
-  await loadModels(settings.model);
+  // 根据 API 类型切换模型控件
+  updateModelInputMode();
+
+  // 加载模型列表（仅 Ollama）
+  if (document.getElementById('apiType').value === 'ollama') {
+    await loadModels(settings.model);
+  } else {
+    document.getElementById('modelInput').value = settings.model || '';
+  }
 
   // 加载缓存大小
   await loadCacheSize();
@@ -37,9 +46,16 @@ async function loadSettings() {
  * 保存设置
  */
 async function saveSettings() {
+  const apiType = document.getElementById('apiType').value;
+  const model = apiType === 'openai'
+    ? document.getElementById('modelInput').value.trim()
+    : document.getElementById('modelSelect').value;
+
   const settings = {
+    apiType: apiType,
     baseUrl: document.getElementById('baseUrl').value.trim(),
-    model: document.getElementById('modelSelect').value,
+    apiKey: document.getElementById('apiKey').value.trim(),
+    model: model,
     cacheEnabled: document.getElementById('cacheEnabled').checked,
     triggers: {
       selection: document.getElementById('triggerSelection').checked,
@@ -49,9 +65,29 @@ async function saveSettings() {
   };
 
   await chrome.storage.sync.set(settings);
+}
 
-  // 更新连接状态
-  await checkConnection();
+/**
+ * 根据 API 类型切换模型控件显示模式
+ */
+function updateModelInputMode() {
+  const apiType = document.getElementById('apiType').value;
+  const selectWrapper = document.querySelector('.model-select-wrapper');
+  const modelInput = document.getElementById('modelInput');
+  const baseUrlLabel = document.getElementById('baseUrlLabel');
+  const baseUrlInput = document.getElementById('baseUrl');
+
+  if (apiType === 'openai') {
+    selectWrapper.style.display = 'none';
+    modelInput.style.display = 'block';
+    baseUrlLabel.textContent = 'API 地址';
+    baseUrlInput.placeholder = 'https://dashscope.aliyuncs.com/compatible-mode/v1';
+  } else {
+    selectWrapper.style.display = 'flex';
+    modelInput.style.display = 'none';
+    baseUrlLabel.textContent = 'Ollama / Open WebUI 地址';
+    baseUrlInput.placeholder = 'http://localhost:11434';
+  }
 }
 
 /**
@@ -92,8 +128,12 @@ async function checkConnection() {
   if (connected) {
     statusEl.textContent = '已连接';
     statusEl.classList.add('connected');
-    // 连接成功后刷新模型列表
-    await loadModels();
+    // 连接成功后刷新模型列表（仅 Ollama），保留当前选择
+    const apiType = document.getElementById('apiType').value;
+    if (apiType === 'ollama') {
+      const settings = await chrome.storage.sync.get('model');
+      await loadModels(settings.model || '');
+    }
   } else {
     statusEl.textContent = '连接失败';
     statusEl.classList.add('error');
@@ -108,7 +148,7 @@ async function checkConnection() {
  */
 function updateButtonStates(connected) {
   const translateBtns = document.querySelectorAll('.action-btn.primary');
-  const modelSelect = document.getElementById('modelSelect');
+  const apiType = document.getElementById('apiType').value;
 
   translateBtns.forEach(btn => {
     btn.disabled = !connected;
@@ -116,7 +156,14 @@ function updateButtonStates(connected) {
 
   // 模型选择也依赖连接
   if (!connected) {
-    modelSelect.innerHTML = '<option value="">请先连接 Ollama</option>';
+    if (apiType === 'ollama') {
+      document.getElementById('modelSelect').innerHTML = '<option value="">请先连接 Ollama</option>';
+    } else {
+      document.getElementById('modelInput').placeholder = '请先连接服务';
+    }
+  } else if (apiType === 'openai') {
+    // 恢复 OpenAI 模式下的 placeholder
+    document.getElementById('modelInput').placeholder = '输入模型名称，如 qwen-plus';
   }
 }
 
@@ -169,11 +216,14 @@ function showToast(message) {
  */
 function bindEvents() {
   // 设置变更自动保存
-  const settingInputs = ['baseUrl', 'modelSelect', 'cacheEnabled', 'triggerSelection', 'triggerPage', 'triggerParagraph'];
+  const settingInputs = ['apiType', 'baseUrl', 'apiKey', 'modelSelect', 'modelInput', 'cacheEnabled', 'triggerSelection', 'triggerPage', 'triggerParagraph'];
   settingInputs.forEach(id => {
     const el = document.getElementById(id);
     el.addEventListener('change', saveSettings);
   });
+
+  // modelInput 输入时也自动保存
+  document.getElementById('modelInput').addEventListener('input', saveSettings);
 
   // baseUrl 输入框失焦时检查连接
   document.getElementById('baseUrl').addEventListener('blur', async () => {
@@ -181,9 +231,20 @@ function bindEvents() {
     await checkConnection();
   });
 
+  // apiType 切换时更新控件并检查连接
+  document.getElementById('apiType').addEventListener('change', async () => {
+    updateModelInputMode();
+    await saveSettings();
+    await checkConnection();
+  });
+
   // 刷新模型列表按钮
   document.getElementById('refreshModels').addEventListener('click', async () => {
-    await loadModels();
+    const apiType = document.getElementById('apiType').value;
+    if (apiType === 'ollama') {
+      const settings = await chrome.storage.sync.get('model');
+      await loadModels(settings.model || '');
+    }
   });
 
   // 翻译页面按钮

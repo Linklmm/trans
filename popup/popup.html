@@ -19,8 +19,21 @@
         <h2>API 设置</h2>
 
         <div class="setting-item">
-          <label for="baseUrl">Ollama 地址</label>
+          <label for="apiType">API 类型</label>
+          <select id="apiType">
+            <option value="ollama">Ollama</option>
+            <option value="openai">OpenAI 兼容</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <label id="baseUrlLabel" for="baseUrl">Ollama / Open WebUI 地址</label>
           <input type="text" id="baseUrl" placeholder="http://localhost:11434">
+        </div>
+
+        <div class="setting-item">
+          <label for="apiKey">API Key（可选）</label>
+          <input type="password" id="apiKey" placeholder="留空表示无认证">
         </div>
 
         <div class="setting-item">
@@ -31,6 +44,7 @@
             </select>
             <button class="refresh-btn" id="refreshModels" title="刷新模型列表">⟳</button>
           </div>
+          <input type="text" id="modelInput" placeholder="输入模型名称，如 qwen-plus" style="display: none;">
         </div>
       </section>
 

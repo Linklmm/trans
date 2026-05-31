@@ -58,17 +58,34 @@
    */
   async function sendTranslateRequest(text) {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        { action: 'translate', text: text },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            resolve({ error: '扩展通信失败，请刷新页面重试' });
-          } else {
-            resolve(response);
+      try {
+        chrome.runtime.sendMessage(
+          { action: 'translate', text: text },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              resolve({ error: '扩展通信失败，请刷新页面重试' });
+            } else {
+              resolve(response);
+            }
           }
-        }
-      );
+        );
+      } catch (e) {
+        // 扩展context失效（扩展被刷新后）
+        resolve({ error: '扩展已更新，请刷新页面' });
+      }
     });
+  }
+
+  /**
+   * 检查扩展context是否有效
+   */
+  function isContextValid() {
+    try {
+      chrome.runtime.id;
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   /**
@@ -92,6 +109,10 @@
    * 处理选中翻译
    */
   function handleSelectionTranslation(selectedText) {
+    if (!isContextValid()) {
+      alert('扩展已更新，请刷新页面后使用');
+      return;
+    }
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
 
@@ -176,6 +197,10 @@
    * 处理全文翻译
    */
   async function handlePageTranslation() {
+    if (!isContextValid()) {
+      alert('扩展已更新，请刷新页面后使用');
+      return;
+    }
     if (isTranslating) {
       alert('已有翻译任务在进行中');
       return;
@@ -216,6 +241,10 @@
    * 处理智能翻译
    */
   async function handleSmartTranslation() {
+    if (!isContextValid()) {
+      alert('扩展已更新，请刷新页面后使用');
+      return;
+    }
     if (isTranslating) {
       alert('已有翻译任务在进行中');
       return;
@@ -277,6 +306,10 @@
    * 翻译单个段落
    */
   async function translateParagraph(paragraphElement) {
+    if (!isContextValid()) {
+      alert('扩展已更新，请刷新页面后使用');
+      return;
+    }
     const text = paragraphElement.textContent.trim();
     if (!text) return;
 
@@ -327,6 +360,11 @@
 
   // 监听来自 Background 的消息
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    // 检查context有效性
+    if (!isContextValid()) {
+      sendResponse({ error: '扩展已更新，请刷新页面' });
+      return false;
+    }
     if (message.action === 'translateSelection') {
       handleSelectionTranslation(message.text);
     } else if (message.action === 'translatePage') {
