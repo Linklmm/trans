@@ -22,8 +22,14 @@ const defaultSettings = {
 
 // 扩展安装时初始化
 chrome.runtime.onInstalled.addListener(async () => {
-  // 设置默认配置
-  await chrome.storage.sync.set(defaultSettings);
+  // 检查是否已有配置（检查配置字段是否存在）
+  const existingSettings = await chrome.storage.local.get(['apiType', 'baseUrl']);
+
+  // 只有当配置字段不存在时才设置默认值，不覆盖用户配置
+  if (!existingSettings.apiType && !existingSettings.baseUrl) {
+    await chrome.storage.local.set(defaultSettings);
+    await chrome.storage.sync.set(defaultSettings);
+  }
 
   // 移除现有菜单，防止重复
   await chrome.contextMenus.removeAll();
@@ -119,11 +125,37 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true; // 保持消息通道开启
 });
 
+/**
+ * 配置字段列表（用于区分配置和缓存条目）
+ */
+const SETTINGS_KEYS = ['apiType', 'baseUrl', 'apiKey', 'model', 'cacheEnabled', 'triggers'];
+
+/**
+ * 获取配置，优先从 storage.local 读取，fallback 到 storage.sync
+ */
+async function getSettings() {
+  const localData = await chrome.storage.local.get(null);
+  // 检查 local 中是否有真正的配置字段（排除缓存条目 trans_*）
+  const hasSettings = SETTINGS_KEYS.some(key => localData.hasOwnProperty(key));
+  if (hasSettings) {
+    return localData;
+  }
+  // fallback 到 storage.sync（兼容旧版本数据）
+  return await chrome.storage.sync.get(null);
+}
+
 async function handleMessage(message, sender) {
-  const settings = await chrome.storage.sync.get(null);
-  api.setApiType(settings.apiType || defaultSettings.apiType);
-  api.setBaseUrl(settings.baseUrl || defaultSettings.baseUrl);
-  api.setApiKey(settings.apiKey || defaultSettings.apiKey);
+  const settings = await getSettings();
+
+  // 对于 checkConnection 和 getModels，优先使用传入的参数
+  const apiType = message.apiType || settings.apiType || defaultSettings.apiType;
+  const baseUrl = message.baseUrl || settings.baseUrl || defaultSettings.baseUrl;
+  const apiKey = message.apiKey || settings.apiKey || defaultSettings.apiKey;
+
+  // 设置 API 参数
+  api.setApiType(apiType);
+  api.setBaseUrl(baseUrl);
+  api.setApiKey(apiKey);
   cache.setEnabled(settings.cacheEnabled ?? defaultSettings.cacheEnabled);
 
   switch (message.action) {
@@ -131,7 +163,7 @@ async function handleMessage(message, sender) {
       return await handleTranslate(message.text, settings.model);
 
     case 'getModels':
-      return await handleGetModels();
+      return await handleGetModels(apiType);
 
     case 'checkConnection':
       return await api.checkConnection();
@@ -182,10 +214,9 @@ async function handleTranslate(text, model) {
   }
 }
 
-async function handleGetModels() {
+async function handleGetModels(apiType) {
   try {
     const models = await api.getModels();
-    const apiType = (await chrome.storage.sync.get('apiType')).apiType || 'ollama';
     const modelIds = apiType === 'openai'
       ? models.map(m => m.id)
       : models.map(m => m.name);

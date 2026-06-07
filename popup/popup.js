@@ -6,9 +6,6 @@ async function init() {
   // 加载当前设置
   await loadSettings();
 
-  // 检查连接状态
-  await checkConnection();
-
   // 绑定事件
   bindEvents();
 }
@@ -17,7 +14,13 @@ async function init() {
  * 加载设置
  */
 async function loadSettings() {
-  const settings = await chrome.storage.sync.get(null);
+  // 优先从 storage.local 读取，fallback 到 storage.sync
+  let settings = await chrome.storage.local.get(null);
+  const hasSettings = ['apiType', 'baseUrl', 'apiKey', 'model', 'cacheEnabled', 'triggers']
+    .some(key => settings.hasOwnProperty(key));
+  if (!hasSettings) {
+    settings = await chrome.storage.sync.get(null);
+  }
 
   // 填充表单
   document.getElementById('apiType').value = settings.apiType || 'ollama';
@@ -64,7 +67,12 @@ async function saveSettings() {
     }
   };
 
+  // 同时写入 storage.local 和 storage.sync，保证持久化
+  await chrome.storage.local.set(settings);
   await chrome.storage.sync.set(settings);
+
+  // 显示保存成功提示
+  showToast('配置已保存');
 }
 
 /**
@@ -116,38 +124,57 @@ async function loadModels(currentModel = '') {
 }
 
 /**
- * 检查 Ollama 连接状态
+ * 测试连接（使用当前输入的值）
  */
-async function checkConnection() {
+async function testConnection() {
   const statusEl = document.getElementById('connectionStatus');
-  statusEl.textContent = '检查连接...';
+  statusEl.textContent = '测试连接...';
   statusEl.className = 'connection-status';
 
-  const connected = await chrome.runtime.sendMessage({ action: 'checkConnection' });
+  // 使用当前输入的值，而非 storage 中保存的值
+  const apiType = document.getElementById('apiType').value;
+  const baseUrl = document.getElementById('baseUrl').value.trim();
+  const apiKey = document.getElementById('apiKey').value.trim();
+
+  if (!baseUrl) {
+    statusEl.textContent = '请填写 API 地址';
+    statusEl.classList.add('error');
+    return;
+  }
+
+  if (apiType === 'openai' && !apiKey) {
+    statusEl.textContent = '请填写 API Key';
+    statusEl.classList.add('error');
+    return;
+  }
+
+  // 发送当前输入值给 service-worker 进行连接测试
+  const connected = await chrome.runtime.sendMessage({
+    action: 'checkConnection',
+    apiType: apiType,
+    baseUrl: baseUrl,
+    apiKey: apiKey
+  });
 
   if (connected) {
-    statusEl.textContent = '已连接';
+    statusEl.textContent = '连接成功';
     statusEl.classList.add('connected');
-    // 连接成功后刷新模型列表（仅 Ollama），保留当前选择
-    const apiType = document.getElementById('apiType').value;
-    if (apiType === 'ollama') {
-      const settings = await chrome.storage.sync.get('model');
-      await loadModels(settings.model || '');
-    }
+    showToast('连接成功');
   } else {
     statusEl.textContent = '连接失败';
     statusEl.classList.add('error');
+    showToast('连接失败，请检查配置');
   }
 
-  // 更新按钮状态
-  updateButtonStates(connected);
+  // 更新翻译按钮状态（保存按钮不受影响）
+  updateTranslateButtonStates(connected);
 }
 
 /**
- * 更新按钮状态
+ * 更新翻译按钮状态（保存按钮始终可点击）
  */
-function updateButtonStates(connected) {
-  const translateBtns = document.querySelectorAll('.action-btn.primary');
+function updateTranslateButtonStates(connected) {
+  const translateBtns = document.querySelectorAll('#translatePageBtn, #translateSmartBtn');
   const apiType = document.getElementById('apiType').value;
 
   translateBtns.forEach(btn => {
@@ -215,37 +242,38 @@ function showToast(message) {
  * 绑定事件
  */
 function bindEvents() {
-  // 设置变更自动保存
-  const settingInputs = ['apiType', 'baseUrl', 'apiKey', 'modelSelect', 'modelInput', 'cacheEnabled', 'triggerSelection', 'triggerPage', 'triggerParagraph'];
-  settingInputs.forEach(id => {
-    const el = document.getElementById(id);
-    el.addEventListener('change', saveSettings);
-  });
-
-  // modelInput 输入时也自动保存
-  document.getElementById('modelInput').addEventListener('input', saveSettings);
-
-  // baseUrl 输入框失焦时检查连接
-  document.getElementById('baseUrl').addEventListener('blur', async () => {
-    await saveSettings();
-    await checkConnection();
-  });
-
-  // apiType 切换时更新控件并检查连接
-  document.getElementById('apiType').addEventListener('change', async () => {
+  // apiType 切换时更新控件
+  document.getElementById('apiType').addEventListener('change', () => {
     updateModelInputMode();
-    await saveSettings();
-    await checkConnection();
   });
 
   // 刷新模型列表按钮
   document.getElementById('refreshModels').addEventListener('click', async () => {
     const apiType = document.getElementById('apiType').value;
     if (apiType === 'ollama') {
-      const settings = await chrome.storage.sync.get('model');
-      await loadModels(settings.model || '');
+      // 使用当前输入的 baseUrl 进行刷新
+      const baseUrl = document.getElementById('baseUrl').value.trim();
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const response = await chrome.runtime.sendMessage({
+        action: 'getModels',
+        apiType: apiType,
+        baseUrl: baseUrl,
+        apiKey: apiKey
+      });
+      if (response.models && response.models.length > 0) {
+        const select = document.getElementById('modelSelect');
+        const currentModel = select.value;
+        select.innerHTML = response.models.map(m =>
+          `<option value="${m}" ${m === currentModel ? 'selected' : ''}>${m}</option>`
+        ).join('');
+      } else {
+        document.getElementById('modelSelect').innerHTML = '<option value="">未找到模型</option>';
+      }
     }
   });
+
+  // 测试连接按钮
+  document.getElementById('testConnectionBtn').addEventListener('click', testConnection);
 
   // 翻译页面按钮
   document.getElementById('translatePageBtn').addEventListener('click', async () => {
@@ -263,6 +291,9 @@ function bindEvents() {
 
   // 清除缓存按钮
   document.getElementById('clearCacheBtn').addEventListener('click', clearCache);
+
+  // 保存配置按钮
+  document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
 
   // 配置快捷键链接
   document.getElementById('configureShortcuts').addEventListener('click', (e) => {
