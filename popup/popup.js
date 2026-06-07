@@ -6,8 +6,39 @@ async function init() {
   // 加载当前设置
   await loadSettings();
 
+  // 使用已保存的配置检查连接状态（配置已保存，不会有循环依赖）
+  await checkConnectionWithSavedSettings();
+
   // 绑定事件
   bindEvents();
+}
+
+/**
+ * 使用已保存的配置检查连接状态（popup 打开时调用）
+ */
+async function checkConnectionWithSavedSettings() {
+  const statusEl = document.getElementById('connectionStatus');
+  statusEl.textContent = '检查连接...';
+  statusEl.className = 'connection-status';
+
+  // 使用 storage 中已保存的配置
+  const connected = await chrome.runtime.sendMessage({ action: 'checkConnection' });
+
+  if (connected) {
+    statusEl.textContent = '已连接';
+    statusEl.classList.add('connected');
+    // 连接成功后刷新模型列表（仅 Ollama）
+    const apiType = document.getElementById('apiType').value;
+    if (apiType === 'ollama') {
+      await loadModels(document.getElementById('modelSelect').value);
+    }
+  } else {
+    statusEl.textContent = '未连接';
+    statusEl.classList.add('error');
+  }
+
+  // 更新翻译按钮状态（保存按钮不受影响）
+  updateTranslateButtonStates(connected);
 }
 
 /**
