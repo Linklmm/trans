@@ -1,0 +1,42 @@
+<svg viewBox="0 0 128 128" fill="none">
+  <rect width="128" height="128" rx="26" fill="#6366F1"/>
+  <rect width="128" height="128" rx="26" fill="url(#mainGradient)"/>
+  <circle cx="20" cy="25" r="4" fill="#C7D2FE" opacity="0.8"/>
+  <circle cx="35" cy="18" r="3" fill="#A5B4FC" opacity="0.6"/>
+  <circle cx="25" cy="40" r="2.5" fill="#E0E7FF" opacity="0.7"/>
+  <line x1="20" y1="25" x2="35" y2="18" stroke="#C7D2FE" stroke-width="1" opacity="0.4"/>
+  <line x1="20" y1="25" x2="25" y2="40" stroke="#C7D2FE" stroke-width="1" opacity="0.4"/>
+  <path d="M24 44H56" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M24 58H48" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M24 72H52" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="64" cy="64" rx="18" ry="18" fill="url(#coreGlow)" opacity="0.6"/>
+  <circle cx="64" cy="64" r="12" fill="#818CF8"/>
+  <path d="M52 54L64 64L52 74" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M64 64H76" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+  <rect x="82" y="44" width="16" height="16" rx="3" fill="#fff"/>
+  <rect x="82" y="64" width="16" height="16" rx="3" fill="#fff"/>
+  <rect x="82" y="84" width="16" height="16" rx="3" fill="#fff"/>
+  <line x1="86" y1="50" x2="94" y2="50" stroke="#6366F1" stroke-width="2"/>
+  <line x1="90" y1="46" x2="90" y2="54" stroke="#6366F1" stroke-width="2"/>
+  <line x1="86" y1="70" x2="94" y2="70" stroke="#6366F1" stroke-width="2"/>
+  <line x1="86" y1="74" x2="94" y2="74" stroke="#6366F1" stroke-width="2"/>
+  <line x1="86" y1="90" x2="94" y2="90" stroke="#6366F1" stroke-width="2"/>
+  <line x1="90" y1="86" x2="90" y2="94" stroke="#6366F1" stroke-width="2"/>
+  <circle cx="28" cy="105" r="5" fill="#A5B4FC" opacity="0.8"/>
+  <circle cx="42" cy="108" r="3" fill="#C7D2FE" opacity="0.6"/>
+  <circle cx="90" cy="105" r="5" fill="#A5B4FC" opacity="0.8"/>
+  <line x1="28" y1="105" x2="42" y2="108" stroke="#A5B4FC" stroke-width="1.5" opacity="0.5"/>
+  <path d="M108 25L110 30L108 35L106 30L108 25" fill="#E0E7FF" opacity="0.8"/>
+  <defs>
+    <linearGradient id="mainGradient" x1="0" y1="0" x2="128" y2="128">
+      <stop offset="0%" stop-color="#818CF8"/>
+      <stop offset="50%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#C7D2FE" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#818CF8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

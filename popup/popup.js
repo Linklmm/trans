@@ -14,27 +14,43 @@ async function init() {
 }
 
 /**
+ * 获取当前选中的 API 类型（从按钮组读取）
+ */
+function getApiType() {
+  const activeBtn = document.querySelector('.api-type-btn.active');
+  return activeBtn ? activeBtn.dataset.type : 'ollama';
+}
+
+/**
+ * 更新连接状态显示
+ */
+function updateConnectionStatus(text, state) {
+  const statusEl = document.getElementById('connectionStatus');
+  statusEl.className = 'connection-status' + (state ? ' ' + state : '');
+  const textEl = statusEl.querySelector('.status-text');
+  if (textEl) {
+    textEl.textContent = text;
+  }
+}
+
+/**
  * 使用已保存的配置检查连接状态（popup 打开时调用）
  */
 async function checkConnectionWithSavedSettings() {
-  const statusEl = document.getElementById('connectionStatus');
-  statusEl.textContent = '检查连接...';
-  statusEl.className = 'connection-status';
+  updateConnectionStatus('检查连接...', '');
 
-  // 使用 storage 中已保存的配置
+  // 使用 storage 中很保存的配置
   const connected = await chrome.runtime.sendMessage({ action: 'checkConnection' });
 
   if (connected) {
-    statusEl.textContent = '已连接';
-    statusEl.classList.add('connected');
+    updateConnectionStatus('已连接', 'connected');
     // 连接成功后刷新模型列表（仅 Ollama）
-    const apiType = document.getElementById('apiType').value;
+    const apiType = getApiType();
     if (apiType === 'ollama') {
       await loadModels(document.getElementById('modelSelect').value);
     }
   } else {
-    statusEl.textContent = '未连接';
-    statusEl.classList.add('error');
+    updateConnectionStatus('未连接', 'error');
   }
 
   // 更新翻译按钮状态（保存按钮不受影响）
@@ -53,8 +69,12 @@ async function loadSettings() {
     settings = await chrome.storage.sync.get(null);
   }
 
-  // 填充表单
-  document.getElementById('apiType').value = settings.apiType || 'ollama';
+  // 填充表单 — API 类型通过按钮组设置
+  const apiType = settings.apiType || 'ollama';
+  document.querySelectorAll('.api-type-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.type === apiType);
+  });
+
   document.getElementById('baseUrl').value = settings.baseUrl || 'http://localhost:11434';
   document.getElementById('apiKey').value = settings.apiKey || '';
   document.getElementById('cacheEnabled').checked = settings.cacheEnabled ?? true;
@@ -66,7 +86,7 @@ async function loadSettings() {
   updateModelInputMode();
 
   // 加载模型列表（仅 Ollama）
-  if (document.getElementById('apiType').value === 'ollama') {
+  if (apiType === 'ollama') {
     await loadModels(settings.model);
   } else {
     document.getElementById('modelInput').value = settings.model || '';
@@ -80,7 +100,7 @@ async function loadSettings() {
  * 保存设置
  */
 async function saveSettings() {
-  const apiType = document.getElementById('apiType').value;
+  const apiType = getApiType();
   const model = apiType === 'openai'
     ? document.getElementById('modelInput').value.trim()
     : document.getElementById('modelSelect').value;
@@ -110,7 +130,7 @@ async function saveSettings() {
  * 根据 API 类型切换模型控件显示模式
  */
 function updateModelInputMode() {
-  const apiType = document.getElementById('apiType').value;
+  const apiType = getApiType();
   const selectWrapper = document.querySelector('.model-select-wrapper');
   const modelInput = document.getElementById('modelInput');
   const baseUrlLabel = document.getElementById('baseUrlLabel');
@@ -158,24 +178,20 @@ async function loadModels(currentModel = '') {
  * 测试连接（使用当前输入的值）
  */
 async function testConnection() {
-  const statusEl = document.getElementById('connectionStatus');
-  statusEl.textContent = '测试连接...';
-  statusEl.className = 'connection-status';
+  updateConnectionStatus('测试连接...', '');
 
   // 使用当前输入的值，而非 storage 中保存的值
-  const apiType = document.getElementById('apiType').value;
+  const apiType = getApiType();
   const baseUrl = document.getElementById('baseUrl').value.trim();
   const apiKey = document.getElementById('apiKey').value.trim();
 
   if (!baseUrl) {
-    statusEl.textContent = '请填写 API 地址';
-    statusEl.classList.add('error');
+    updateConnectionStatus('请填写 API 地址', 'error');
     return;
   }
 
   if (apiType === 'openai' && !apiKey) {
-    statusEl.textContent = '请填写 API Key';
-    statusEl.classList.add('error');
+    updateConnectionStatus('请填写 API Key', 'error');
     return;
   }
 
@@ -188,12 +204,10 @@ async function testConnection() {
   });
 
   if (connected) {
-    statusEl.textContent = '连接成功';
-    statusEl.classList.add('connected');
+    updateConnectionStatus('连接成功', 'connected');
     showToast('连接成功');
   } else {
-    statusEl.textContent = '连接失败';
-    statusEl.classList.add('error');
+    updateConnectionStatus('连接失败', 'error');
     showToast('连接失败，请检查配置');
   }
 
@@ -206,7 +220,7 @@ async function testConnection() {
  */
 function updateTranslateButtonStates(connected) {
   const translateBtns = document.querySelectorAll('#translatePageBtn, #translateSmartBtn');
-  const apiType = document.getElementById('apiType').value;
+  const apiType = getApiType();
 
   translateBtns.forEach(btn => {
     btn.disabled = !connected;
@@ -252,18 +266,6 @@ function showToast(message) {
   const toast = document.createElement('div');
   toast.className = 'toast';
   toast.textContent = message;
-  toast.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #333;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-size: 12px;
-    z-index: 1000;
-  `;
   document.body.appendChild(toast);
 
   setTimeout(() => toast.remove(), 2000);
@@ -273,14 +275,32 @@ function showToast(message) {
  * 绑定事件
  */
 function bindEvents() {
-  // apiType 切换时更新控件
-  document.getElementById('apiType').addEventListener('change', () => {
-    updateModelInputMode();
+  // Tab 切换
+  document.querySelectorAll('.tab-item').forEach(tab => {
+    tab.addEventListener('click', () => {
+      // 切换 active tab
+      document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      // 切换对应 panel
+      const targetTab = tab.dataset.tab;
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.dataset.panel === targetTab);
+      });
+    });
+  });
+
+  // API 类型按钮切换
+  document.querySelectorAll('.api-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.api-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateModelInputMode();
+    });
   });
 
   // 刷新模型列表按钮
   document.getElementById('refreshModels').addEventListener('click', async () => {
-    const apiType = document.getElementById('apiType').value;
+    const apiType = getApiType();
     if (apiType === 'ollama') {
       // 使用当前输入的 baseUrl 进行刷新
       const baseUrl = document.getElementById('baseUrl').value.trim();

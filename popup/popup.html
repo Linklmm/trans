@@ -7,23 +7,54 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="popup-container">
-    <header class="popup-header">
-      <h1>Ollama Translator</h1>
-      <span class="connection-status" id="connectionStatus">检查连接...</span>
-    </header>
 
-    <main class="popup-main">
-      <!-- API 设置 -->
-      <section class="settings-section">
-        <h2>API 设置</h2>
+  <!-- Header -->
+  <header class="popup-header">
+    <div class="header-main">
+      <div class="header-logo">
+        <svg width="20" height="20" viewBox="0 0 128 128" fill="none">
+          <path d="M24 44H56" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+          <path d="M24 58H48" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+          <path d="M52 54L64 64L52 74" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="82" y="44" width="16" height="16" rx="3" fill="#fff" opacity="0.8"/>
+        </svg>
+      </div>
+      <div class="header-title">
+        <h1>Ollama Translator</h1>
+        <span class="header-subtitle">英译汉翻译助手</span>
+      </div>
+    </div>
+    <div class="connection-status" id="connectionStatus">
+      <span class="status-dot"></span>
+      <span class="status-text">检查连接...</span>
+    </div>
+  </header>
 
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <button class="action-btn primary" id="translatePageBtn">🌐 翻译页面</button>
+    <button class="action-btn outline" id="translateSmartBtn">✨ 智能翻译</button>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-item active" data-tab="api">API 设置</button>
+    <button class="tab-item" data-tab="trigger">触发方式</button>
+    <button class="tab-item" data-tab="cache">缓存</button>
+  </div>
+
+  <!-- Main Content -->
+  <main class="popup-main">
+
+    <!-- API Settings Panel -->
+    <div class="tab-panel active" data-panel="api">
+      <div class="settings-card">
         <div class="setting-item">
-          <label for="apiType">API 类型</label>
-          <select id="apiType">
-            <option value="ollama">Ollama</option>
-            <option value="openai">OpenAI 兼容</option>
-          </select>
+          <label>API 类型</label>
+          <div class="api-type-buttons">
+            <button class="api-type-btn active" data-type="ollama">Ollama</button>
+            <button class="api-type-btn" data-type="openai">OpenAI 兼容</button>
+          </div>
         </div>
 
         <div class="setting-item">
@@ -46,18 +77,18 @@
           </div>
           <input type="text" id="modelInput" placeholder="输入模型名称，如 qwen-plus" style="display: none;">
         </div>
-      </section>
+      </div>
+    </div>
 
-      <!-- 翻译触发方式 -->
-      <section class="settings-section">
-        <h2>翻译触发方式</h2>
-
+    <!-- Trigger Panel -->
+    <div class="tab-panel" data-panel="trigger">
+      <div class="settings-card">
         <div class="setting-item checkbox-group">
           <label>
             <input type="checkbox" id="triggerSelection" checked>
             <span>选中翻译</span>
           </label>
-          <small class="hint">选中文本后右键或快捷键翻译</small>
+          <small>选中文本后右键或快捷键翻译</small>
         </div>
 
         <div class="setting-item checkbox-group">
@@ -65,7 +96,7 @@
             <input type="checkbox" id="triggerPage" checked>
             <span>全文翻译</span>
           </label>
-          <small class="hint">翻译整个页面内容</small>
+          <small>翻译整个页面内容</small>
         </div>
 
         <div class="setting-item checkbox-group">
@@ -73,73 +104,53 @@
             <input type="checkbox" id="triggerParagraph" checked>
             <span>段落翻译</span>
           </label>
-          <small class="hint">鼠标悬停段落时显示翻译按钮</small>
+          <small>鼠标悬停段落时显示翻译按钮</small>
         </div>
-      </section>
+      </div>
 
-      <!-- 快捷操作 -->
-      <section class="settings-section">
-        <h2>快捷操作</h2>
+      <div class="shortcut-info">
+        <p>
+          <strong>选中翻译:</strong>
+          <span id="shortcutSelection">Ctrl+Shift+T</span>
+        </p>
+        <p>
+          <strong>全文翻译:</strong>
+          <span id="shortcutPage">Ctrl+Shift+P</span>
+        </p>
+        <a href="#" id="configureShortcuts">配置快捷键</a>
+      </div>
+    </div>
 
-        <div class="action-buttons">
-          <button class="action-btn primary" id="translatePageBtn">
-            翻译当前页面
-          </button>
-          <button class="action-btn primary" id="translateSmartBtn">
-            智能翻译
-          </button>
-        </div>
-
-        <div class="shortcut-info">
-          <p>
-            <strong>选中翻译:</strong>
-            <span id="shortcutSelection">Ctrl+Shift+T</span>
-          </p>
-          <p>
-            <strong>全文翻译:</strong>
-            <span id="shortcutPage">Ctrl+Shift+P</span>
-          </p>
-          <a href="#" id="configureShortcuts">配置快捷键</a>
-        </div>
-      </section>
-
-      <!-- 缓存设置 -->
-      <section class="settings-section">
-        <h2>缓存设置</h2>
-
-        <div class="setting-item checkbox-group">
+    <!-- Cache Panel -->
+    <div class="tab-panel" data-panel="cache">
+      <div class="settings-card">
+        <div class="setting-item checkbox-group" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
           <label>
             <input type="checkbox" id="cacheEnabled" checked>
             <span>启用翻译缓存</span>
           </label>
-          <small class="hint">缓存翻译结果，减少重复请求</small>
+          <small>缓存翻译结果，减少重复请求</small>
         </div>
 
         <div class="cache-actions">
-          <button class="action-btn secondary" id="clearCacheBtn">
-            清除所有缓存
-          </button>
+          <button class="action-btn secondary" id="clearCacheBtn">清除所有缓存</button>
           <span class="cache-size" id="cacheSize">缓存：0 条</span>
         </div>
-      </section>
+      </div>
+    </div>
 
-      <!-- 配置操作 -->
-      <section class="settings-section">
-        <div class="action-buttons">
-          <button class="action-btn secondary" id="testConnectionBtn">
-            测试连接
-          </button>
-          <button class="action-btn primary" id="saveSettingsBtn">
-            保存配置
-          </button>
-        </div>
-      </section>
-    </main>
+  </main>
 
-    <footer class="popup-footer">
-      <p>版本 1.0.0</p>
-    </footer>
+  <!-- Bottom Actions -->
+  <div class="bottom-actions">
+    <button class="action-btn secondary" id="testConnectionBtn">测试连接</button>
+    <button class="action-btn primary" id="saveSettingsBtn">保存配置</button>
   </div>
+
+  <!-- Footer -->
+  <footer class="popup-footer">
+    Ollama Translator v1.0.0
+  </footer>
 
   <script src="popup.js"></script>
 </body>

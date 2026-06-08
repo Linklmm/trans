@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ollama Translator Icon Design</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      padding: 40px;
+      color: #fff;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 60px;
+      font-weight: 300;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .icons-container {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      flex-wrap: wrap;
+    }
+
+    .icon-card {
+      text-align: center;
+      padding: 40px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .icon-card h3 {
+      margin-bottom: 20px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .icon-preview {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .icon-preview.dark {
+      background: #2d2d2d;
+    }
+
+    /* Icon Design - Main Concept */
+    /* A stylized translation symbol with AI neural network elements */
+    /* Features: flowing text lines transforming + neural glow */
+
+    .icon-16 {
+      width: 16px;
+      height: 16px;
+    }
+
+    .icon-48 {
+      width: 48px;
+      height: 48px;
+    }
+
+    .icon-128 {
+      width: 128px;
+      height: 128px;
+    }
+
+    .download-section {
+      margin-top: 80px;
+      text-align: center;
+    }
+
+    .download-section h2 {
+      margin-bottom: 30px;
+      font-weight: 300;
+    }
+
+    .svg-code {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 30px;
+      margin: 20px auto;
+      max-width: 800px;
+      font-family: 'Monaco', 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+      color: #e0e0e0;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .color-palette {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .color-item {
+      text-align: center;
+    }
+
+    .color-swatch {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .color-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+<body>
+  <h1>Ollama Translator Icon</h1>
+
+  <div class="icons-container">
+    <!-- 16x16 -->
+    <div class="icon-card">
+      <h3>16 × 16</h3>
+      <div class="icon-preview">
+        <svg class="icon-16" viewBox="0 0 16 16" fill="none">
+          <!-- Simplified for small size: just the core symbol -->
+          <rect width="16" height="16" rx="3" fill="#6366F1"/>
+          <!-- Left text line -->
+          <path d="M3 5H7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M3 7.5H6" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Arrow -->
+          <path d="M8.5 6L11 8L8.5 10" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Right text line (Chinese style) -->
+          <path d="M12 5.5V8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M13 7H11" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="icon-preview dark">
+        <svg class="icon-16" viewBox="0 0 16 16" fill="none">
+          <rect width="16" height="16" rx="3" fill="#6366F1"/>
+          <path d="M3 5H7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M3 7.5H6" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8.5 6L11 8L8.5 10" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 5.5V8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M13 7H11" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 48x48 -->
+    <div class="icon-card">
+      <h3>48 × 48</h3>
+      <div class="icon-preview">
+        <svg class="icon-48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="10" fill="#6366F1"/>
+          <!-- Gradient overlay for AI feel -->
+          <rect width="48" height="48" rx="10" fill="url(#aiGradient48)"/>
+
+          <!-- Left English text lines -->
+          <path d="M10 14H22" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M10 20H18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M10 26H20" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- Central transformation arrow with glow -->
+          <circle cx="24" cy="24" r="8" fill="url(#glow48)" opacity="0.5"/>
+          <path d="M19 20L26 24L19 28" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M26 24H30" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- Right Chinese character representation -->
+          <rect x="32" y="14" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/>
+          <rect x="32" y="22" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/>
+          <rect x="32" y="30" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/>
+
+          <!-- Neural dots -->
+          <circle cx="14" cy="36" r="2" fill="#A5B4FC"/>
+          <circle cx="20" cy="38" r="1.5" fill="#C7D2FE"/>
+          <circle cx="36" cy="38" r="2" fill="#A5B4FC"/>
+
+          <defs>
+            <linearGradient id="aiGradient48" x1="0" y1="0" x2="48" y2="48">
+              <stop offset="0%" stop-color="#818CF8" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="glow48" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="icon-preview dark">
+        <svg class="icon-48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="10" fill="#6366F1"/>
+          <rect width="48" height="48" rx="10" fill="url(#aiGradient48d)"/>
+          <path d="M10 14H22" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M10 20H18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M10 26H20" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="8" fill="url(#glow48d)" opacity="0.5"/>
+          <path d="M19 20L26 24L19 28" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M26 24H30" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="32" y="14" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/>
+          <rect x="32" y="22" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/>
+          <rect x="32" y="30" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/>
+          <circle cx="14" cy="36" r="2" fill="#A5B4FC"/>
+          <circle cx="20" cy="38" r="1.5" fill="#C7D2FE"/>
+          <circle cx="36" cy="38" r="2" fill="#A5B4FC"/>
+          <defs>
+            <linearGradient id="aiGradient48d" x1="0" y1="0" x2="48" y2="48">
+              <stop offset="0%" stop-color="#818CF8" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/>
+            </linearGradient>
+            <radialGradient id="glow48d" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 128x128 -->
+    <div class="icon-card">
+      <h3>128 × 128</h3>
+      <div class="icon-preview">
+        <svg class="icon-128" viewBox="0 0 128 128" fill="none">
+          <!-- Background with gradient -->
+          <rect width="128" height="128" rx="26" fill="#6366F1"/>
+          <rect width="128" height="128" rx="26" fill="url(#mainGradient)"/>
+
+          <!-- Neural network nodes (AI element) -->
+          <circle cx="20" cy="25" r="4" fill="#C7D2FE" opacity="0.8"/>
+          <circle cx="35" cy="18" r="3" fill="#A5B4FC" opacity="0.6"/>
+          <circle cx="25" cy="40" r="2.5" fill="#E0E7FF" opacity="0.7"/>
+          <line x1="20" y1="25" x2="35" y2="18" stroke="#C7D2FE" stroke-width="1" opacity="0.4"/>
+          <line x1="20" y1="25" x2="25" y2="40" stroke="#C7D2FE" stroke-width="1" opacity="0.4"/>
+
+          <!-- Left: English text representation (3 lines) -->
+          <path d="M24 44H56" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M24 58H48" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M24 72H52" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+
+          <!-- Central transformation core with glow -->
+          <ellipse cx="64" cy="64" rx="18" ry="18" fill="url(#coreGlow)" opacity="0.6"/>
+          <circle cx="64" cy="64" r="12" fill="#818CF8"/>
+          <!-- Transformation arrows -->
+          <path d="M52 54L64 64L52 74" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M64 64H76" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+
+          <!-- Right: Chinese character blocks -->
+          <rect x="82" y="44" width="16" height="16" rx="3" fill="#fff"/>
+          <rect x="82" y="64" width="16" height="16" rx="3" fill="#fff"/>
+          <rect x="82" y="84" width="16" height="16" rx="3" fill="#fff"/>
+          <!-- Chinese character styling -->
+          <line x1="86" y1="50" x2="94" y2="50" stroke="#6366F1" stroke-width="2"/>
+          <line x1="90" y1="46" x2="90" y2="54" stroke="#6366F1" stroke-width="2"/>
+          <line x1="86" y1="70" x2="94" y2="70" stroke="#6366F1" stroke-width="2"/>
+          <line x1="86" y1="74" x2="94" y2="74" stroke="#6366F1" stroke-width="2"/>
+          <line x1="86" y1="90" x2="94" y2="90" stroke="#6366F1" stroke-width="2"/>
+          <line x1="90" y1="86" x2="90" y2="94" stroke="#6366F1" stroke-width="2"/>
+
+          <!-- Bottom neural nodes -->
+          <circle cx="28" cy="105" r="5" fill="#A5B4FC" opacity="0.8"/>
+          <circle cx="42" cy="108" r="3" fill="#C7D2FE" opacity="0.6"/>
+          <circle cx="90" cy="105" r="5" fill="#A5B4FC" opacity="0.8"/>
+          <line x1="28" y1="105" x2="42" y2="108" stroke="#A5B4FC" stroke-width="1.5" opacity="0.5"/>
+
+          <!-- Accent sparkle -->
+          <path d="M108 25L110 30L108 35L106 30L108 25" fill="#E0E7FF" opacity="0.8"/>
+
+          <defs>
+            <linearGradient id="mainGradient" x1="0" y1="0" x2="128" y2="128">
+              <stop offset="0%" stop-color="#818CF8"/>
+              <stop offset="50%" stop-color="#6366F1"/>
+              <stop offset="100%" stop-color="#4F46E5"/>
+            </linearGradient>
+            <radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#C7D2FE" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#818CF8" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="icon-preview dark">
+        <svg class="icon-128" viewBox="0 0 128 128" fill="none">
+          <rect width="128" height="128" rx="26" fill="#6366F1"/>
+          <rect width="128" height="128" rx="26" fill="url(#mainGradientD)"/>
+          <circle cx="20" cy="25" r="4" fill="#C7D2FE" opacity="0.8"/>
+          <circle cx="35" cy="18" r="3" fill="#A5B4FC" opacity="0.6"/>
+          <circle cx="25" cy="40" r="2.5" fill="#E0E7FF" opacity="0.7"/>
+          <line x1="20" y1="25" x2="35" y2="18" stroke="#C7D2FE" stroke-width="1" opacity="0.4"/>
+          <line x1="20" y1="25" x2="25" y2="40" stroke="#C7D2FE" stroke-width="1" opacity="0.4"/>
+          <path d="M24 44H56" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M24 58H48" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+          <path d="M24 72H52" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="64" cy="64" rx="18" ry="18" fill="url(#coreGlowD)" opacity="0.6"/>
+          <circle cx="64" cy="64" r="12" fill="#818CF8"/>
+          <path d="M52 54L64 64L52 74" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M64 64H76" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          <rect x="82" y="44" width="16" height="16" rx="3" fill="#fff"/>
+          <rect x="82" y="64" width="16" height="16" rx="3" fill="#fff"/>
+          <rect x="82" y="84" width="16" height="16" rx="3" fill="#fff"/>
+          <line x1="86" y1="50" x2="94" y2="50" stroke="#6366F1" stroke-width="2"/>
+          <line x1="90" y1="46" x2="90" y2="54" stroke="#6366F1" stroke-width="2"/>
+          <line x1="86" y1="70" x2="94" y2="70" stroke="#6366F1" stroke-width="2"/>
+          <line x1="86" y1="74" x2="94" y2="74" stroke="#6366F1" stroke-width="2"/>
+          <line x1="86" y1="90" x2="94" y2="90" stroke="#6366F1" stroke-width="2"/>
+          <line x1="90" y1="86" x2="90" y2="94" stroke="#6366F1" stroke-width="2"/>
+          <circle cx="28" cy="105" r="5" fill="#A5B4FC" opacity="0.8"/>
+          <circle cx="42" cy="108" r="3" fill="#C7D2FE" opacity="0.6"/>
+          <circle cx="90" cy="105" r="5" fill="#A5B4FC" opacity="0.8"/>
+          <line x1="28" y1="105" x2="42" y2="108" stroke="#A5B4FC" stroke-width="1.5" opacity="0.5"/>
+          <path d="M108 25L110 30L108 35L106 30L108 25" fill="#E0E7FF" opacity="0.8"/>
+          <defs>
+            <linearGradient id="mainGradientD" x1="0" y1="0" x2="128" y2="128">
+              <stop offset="0%" stop-color="#818CF8"/>
+              <stop offset="50%" stop-color="#6366F1"/>
+              <stop offset="100%" stop-color="#4F46E5"/>
+            </linearGradient>
+            <radialGradient id="coreGlowD" cx="0.5" cy="0.5" r="0.5">
+              <stop offset="0%" stop-color="#fff" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#C7D2FE" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#818CF8" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Palette -->
+  <div class="color-palette">
+    <div class="color-item">
+      <div class="color-swatch" style="background: #6366F1;"></div>
+      <div class="color-label">Primary #6366F1</div>
+    </div>
+    <div class="color-item">
+      <div class="color-swatch" style="background: #818CF8;"></div>
+      <div class="color-label">Light #818CF8</div>
+    </div>
+    <div class="color-item">
+      <div class="color-swatch" style="background: #4F46E5;"></div>
+      <div class="color-label">Dark #4F46E5</div>
+    </div>
+    <div class="color-item">
+      <div class="color-swatch" style="background: #A5B4FC;"></div>
+      <div class="color-label">Accent #A5B4FC</div>
+    </div>
+    <div class="color-item">
+      <div class="color-swatch" style="background: #C7D2FE;"></div>
+      <div class="color-label">Glow #C7D2FE</div>
+    </div>
+  </div>
+
+  <!-- SVG Code for Download -->
+  <div class="download-section">
+    <h2>SVG 源代码（可直接复制使用）</h2>
+
+    <h3 style="margin-top: 30px; color: rgba(255,255,255,0.7);">16×16 图标</h3>
+    <div class="svg-code">&lt;svg viewBox="0 0 16 16" fill="none"&gt;
+  &lt;rect width="16" height="16" rx="3" fill="#6366F1"/&gt;
+  &lt;path d="M3 5H7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/&gt;
+  &lt;path d="M3 7.5H6" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/&gt;
+  &lt;path d="M8.5 6L11 8L8.5 10" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/&gt;
+  &lt;path d="M12 5.5V8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/&gt;
+  &lt;path d="M13 7H11" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/&gt;
+&lt;/svg&gt;</div>
+
+    <h3 style="margin-top: 30px; color: rgba(255,255,255,0.7);">48×48 图标</h3>
+    <div class="svg-code">&lt;svg viewBox="0 0 48 48" fill="none"&gt;
+  &lt;rect width="48" height="48" rx="10" fill="#6366F1"/&gt;
+  &lt;rect width="48" height="48" rx="10" fill="url(#aiGradient)"/&gt;
+  &lt;path d="M10 14H22" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/&gt;
+  &lt;path d="M10 20H18" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/&gt;
+  &lt;path d="M10 26H20" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/&gt;
+  &lt;circle cx="24" cy="24" r="8" fill="url(#glow)" opacity="0.5"/&gt;
+  &lt;path d="M19 20L26 24L19 28" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/&gt;
+  &lt;path d="M26 24H30" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/&gt;
+  &lt;rect x="32" y="14" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/&gt;
+  &lt;rect x="32" y="22" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/&gt;
+  &lt;rect x="32" y="30" width="6" height="6" rx="1" fill="#fff" opacity="0.9"/&gt;
+  &lt;circle cx="14" cy="36" r="2" fill="#A5B4FC"/&gt;
+  &lt;circle cx="20" cy="38" r="1.5" fill="#C7D2FE"/&gt;
+  &lt;circle cx="36" cy="38" r="2" fill="#A5B4FC"/&gt;
+  &lt;defs&gt;
+    &lt;linearGradient id="aiGradient" x1="0" y1="0" x2="48" y2="48"&gt;
+      &lt;stop offset="0%" stop-color="#818CF8" stop-opacity="0.3"/&gt;
+      &lt;stop offset="100%" stop-color="#4F46E5" stop-opacity="0"/&gt;
+    &lt;/linearGradient&gt;
+    &lt;radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"&gt;
+      &lt;stop offset="0%" stop-color="#fff" stop-opacity="0.8"/&gt;
+      &lt;stop offset="100%" stop-color="#fff" stop-opacity="0"/&gt;
+    &lt;/radialGradient&gt;
+  &lt;/defs&gt;
+&lt;/svg&gt;</div>
+
+    <h3 style="margin-top: 30px; color: rgba(255,255,255,0.7);">128×128 图标</h3>
+    <div class="svg-code">&lt;svg viewBox="0 0 128 128" fill="none"&gt;
+  &lt;rect width="128" height="128" rx="26" fill="#6366F1"/&gt;
+  &lt;rect width="128" height="128" rx="26" fill="url(#mainGradient)"/&gt;
+  &lt;circle cx="20" cy="25" r="4" fill="#C7D2FE" opacity="0.8"/&gt;
+  &lt;circle cx="35" cy="18" r="3" fill="#A5B4FC" opacity="0.6"/&gt;
+  &lt;circle cx="25" cy="40" r="2.5" fill="#E0E7FF" opacity="0.7"/&gt;
+  &lt;line x1="20" y1="25" x2="35" y2="18" stroke="#C7D2FE" stroke-width="1" opacity="0.4"/&gt;
+  &lt;line x1="20" y1="25" x2="25" y2="40" stroke="#C7D2FE" stroke-width="1" opacity="0.4"/&gt;
+  &lt;path d="M24 44H56" stroke="#fff" stroke-width="5" stroke-linecap="round"/&gt;
+  &lt;path d="M24 58H48" stroke="#fff" stroke-width="5" stroke-linecap="round"/&gt;
+  &lt;path d="M24 72H52" stroke="#fff" stroke-width="5" stroke-linecap="round"/&gt;
+  &lt;ellipse cx="64" cy="64" rx="18" ry="18" fill="url(#coreGlow)" opacity="0.6"/&gt;
+  &lt;circle cx="64" cy="64" r="12" fill="#818CF8"/&gt;
+  &lt;path d="M52 54L64 64L52 74" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/&gt;
+  &lt;path d="M64 64H76" stroke="#fff" stroke-width="4" stroke-linecap="round"/&gt;
+  &lt;rect x="82" y="44" width="16" height="16" rx="3" fill="#fff"/&gt;
+  &lt;rect x="82" y="64" width="16" height="16" rx="3" fill="#fff"/&gt;
+  &lt;rect x="82" y="84" width="16" height="16" rx="3" fill="#fff"/&gt;
+  &lt;line x1="86" y1="50" x2="94" y2="50" stroke="#6366F1" stroke-width="2"/&gt;
+  &lt;line x1="90" y1="46" x2="90" y2="54" stroke="#6366F1" stroke-width="2"/&gt;
+  &lt;line x1="86" y1="70" x2="94" y2="70" stroke="#6366F1" stroke-width="2"/&gt;
+  &lt;line x1="86" y1="74" x2="94" y2="74" stroke="#6366F1" stroke-width="2"/&gt;
+  &lt;line x1="86" y1="90" x2="94" y2="90" stroke="#6366F1" stroke-width="2"/&gt;
+  &lt;line x1="90" y1="86" x2="90" y2="94" stroke="#6366F1" stroke-width="2"/&gt;
+  &lt;circle cx="28" cy="105" r="5" fill="#A5B4FC" opacity="0.8"/&gt;
+  &lt;circle cx="42" cy="108" r="3" fill="#C7D2FE" opacity="0.6"/&gt;
+  &lt;circle cx="90" cy="105" r="5" fill="#A5B4FC" opacity="0.8"/&gt;
+  &lt;line x1="28" y1="105" x2="42" y2="108" stroke="#A5B4FC" stroke-width="1.5" opacity="0.5"/&gt;
+  &lt;path d="M108 25L110 30L108 35L106 30L108 25" fill="#E0E7FF" opacity="0.8"/&gt;
+  &lt;defs&gt;
+    &lt;linearGradient id="mainGradient" x1="0" y1="0" x2="128" y2="128"&gt;
+      &lt;stop offset="0%" stop-color="#818CF8"/&gt;
+      &lt;stop offset="50%" stop-color="#6366F1"/&gt;
+      &lt;stop offset="100%" stop-color="#4F46E5"/&gt;
+    &lt;/linearGradient&gt;
+    &lt;radialGradient id="coreGlow" cx="0.5" cy="0.5" r="0.5"&gt;
+      &lt;stop offset="0%" stop-color="#fff" stop-opacity="1"/&gt;
+      &lt;stop offset="60%" stop-color="#C7D2FE" stop-opacity="0.5"/&gt;
+      &lt;stop offset="100%" stop-color="#818CF8" stop-opacity="0"/&gt;
+    &lt;/radialGradient&gt;
+  &lt;/defs&gt;
+&lt;/svg&gt;</div>
+
+    <p style="margin-top: 40px; color: rgba(255,255,255,0.5); font-size: 14px;">
+      💡 提示：将 SVG 代码保存为 .svg 文件，然后使用在线工具（如 <a href="https://cloudconvert.com/svg-to-png" style="color: #A5B4FC;">CloudConvert</a>）转换为 PNG 格式
+    </p>
+  </div>
+</body>
+</html>
